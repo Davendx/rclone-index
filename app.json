@@ -1,5 +1,5 @@
 {
-	"name": "Rclone Index",
+	"name": "Rclone Index name",
 	"description": "Deploy rclone index for your cloud storages easily",
 	"repository": "https://github.com/devolart/rclone-index",
 	"env": {
