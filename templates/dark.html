@@ -5,6 +5,8 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="google" content="notranslate">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+		<script language="javascript" src="http://127.0.0.1:9666/jdcheck.js"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * {
@@ -72,6 +74,15 @@ main {
 	border: 1px solid #dadce0;
 	border-radius: 4px;
 	font-size: 14px;
+}
+#jdownloader {
+	padding: 8px 12px;
+	border: 1px solid #dadce0;
+	border-radius: 4px;
+	font-size: 14px;
+	background-color: #1a73e8;
+	color: white;
+	cursor: pointer;
 }
 #filter:focus {
 	outline: none;
@@ -145,6 +156,7 @@ tbody tr:hover {
 			<main>
 				<div class="meta">
 					<input type="text" placeholder="Filter files" id="filter" onkeyup='filter()'>
+					<button id="jdownloader">Send to JDownloader2</button>
 				</div>
 				<div class="listing">
 					<table aria-describedby="summary">
@@ -276,14 +288,64 @@ tbody tr:hover {
 				const links = h1.querySelectorAll('a');
 				const colors = ['#4285F4', '#EA4335', '#FBBC05', '#4285F4', '#34A853', '#EA4335'];
 
-				links.forEach(link => {
-					const text = link.textContent;
-					const coloredText = text.split('').map((char, index) => {
-						if (char.trim() === '') return char; // preserve spaces
-						return `<span style="color: ${colors[index % colors.length]}">${char}</span>`;
-					}).join('');
-					link.innerHTML = coloredText;
+				links.forEach((link, linkIndex) => {
+					link.style.color = colors[linkIndex % colors.length];
 				});
+			}
+
+			document.getElementById('jdownloader').addEventListener('click', function() {
+				var fileLinks = [];
+				var linkElements = document.querySelectorAll('tr.file a');
+				linkElements.forEach(function(el) {
+					// only add links that don't go up a directory
+					if (el.getAttribute('href') !== '..') {
+						fileLinks.push(el.href);
+					}
+				});
+
+				var breadcrumbs = document.querySelectorAll('h1 a');
+				var packageName = breadcrumbs[breadcrumbs.length - 1].textContent.trim();
+
+				sendToJDownloader(fileLinks, packageName);
+			});
+
+			function sendToJDownloader(links, packageName) {
+				var key = CryptoJS.enc.Utf8.parse('1234567890987654');
+				var iv = key;
+
+				var data = {
+					"packageName": packageName,
+					"urls": links.join('\r\n')
+				};
+
+				var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), key, {
+					iv: iv,
+					mode: CryptoJS.mode.CBC,
+					padding: CryptoJS.pad.Pkcs7
+				});
+
+				var form = document.createElement('form');
+				form.method = 'POST';
+				form.action = 'http://127.0.0.1:9666/flash/addcrypted2';
+				form.target = 'hidden';
+
+				var fields = {
+					passwords: '',
+					source: window.location.href,
+					jk: "function f(){ return '31323334353637383930393837363534';}",
+					crypted: encrypted.toString()
+				};
+
+				for (var key in fields) {
+					var input = document.createElement('input');
+					input.type = 'hidden';
+					input.name = key;
+					input.value = fields[key];
+					form.appendChild(input);
+				}
+
+				document.body.appendChild(form);
+				form.submit();
 			}
 		</script>
 	</body>
