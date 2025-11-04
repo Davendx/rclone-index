@@ -83,6 +83,7 @@ main {
 	background-color: #1a73e8;
 	color: white;
 	cursor: pointer;
+	margin-left: 10px;
 }
 #filter:focus {
 	outline: none;
@@ -324,10 +325,15 @@ tbody tr:hover {
 					padding: CryptoJS.pad.Pkcs7
 				});
 
+				var iframe = document.createElement('iframe');
+				iframe.name = 'jdownloader';
+				iframe.style.display = 'none';
+				document.body.appendChild(iframe);
+
 				var form = document.createElement('form');
 				form.method = 'POST';
 				form.action = 'http://127.0.0.1:9666/flash/addcrypted2';
-				form.target = 'hidden';
+				form.target = 'jdownloader';
 
 				var fields = {
 					passwords: '',
@@ -346,6 +352,11 @@ tbody tr:hover {
 
 				document.body.appendChild(form);
 				form.submit();
+
+				setTimeout(function() {
+					document.body.removeChild(iframe);
+					document.body.removeChild(form);
+				}, 500);
 			}
 		</script>
 	</body>
