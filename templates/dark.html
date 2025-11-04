@@ -325,38 +325,25 @@ tbody tr:hover {
 					padding: CryptoJS.pad.Pkcs7
 				});
 
-				var iframe = document.createElement('iframe');
-				iframe.name = 'jdownloader';
-				iframe.style.display = 'none';
-				document.body.appendChild(iframe);
-
-				var form = document.createElement('form');
-				form.method = 'POST';
-				form.action = 'http://127.0.0.1:9666/flash/addcrypted2';
-				form.target = 'jdownloader';
-
-				var fields = {
+				var params = new URLSearchParams({
 					passwords: '',
 					source: window.location.href,
 					jk: "function f(){ return '31323334353637383930393837363534';}",
 					crypted: encrypted.toString()
-				};
+				});
 
-				for (var key in fields) {
-					var input = document.createElement('input');
-					input.type = 'hidden';
-					input.name = key;
-					input.value = fields[key];
-					form.appendChild(input);
-				}
-
-				document.body.appendChild(form);
-				form.submit();
-
-				setTimeout(function() {
-					document.body.removeChild(iframe);
-					document.body.removeChild(form);
-				}, 500);
+				fetch('http://127.0.0.1:9666/flash/addcrypted2', {
+					method: 'POST',
+					body: params,
+					mode: 'no-cors'
+				}).then(response => {
+					// We can't actually read the response in no-cors mode,
+					// but a successful dispatch means JDownloader is likely running.
+					// A failed dispatch will be caught in the .catch block.
+				}).catch(err => {
+					alert('Could not connect to JDownloader. Please make sure it is running and the Click\'n\'Load extension is enabled.');
+					console.error('Error sending to JDownloader:', err);
+				});
 			}
 		</script>
 	</body>
