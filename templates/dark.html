@@ -136,22 +136,20 @@ main {
 	color: var(--text-primary);
 	flex-grow: 1;
 }
-#jdownloader {
+.filter-controls {
+	display: flex;
+	gap: 10px;
+	margin-left: 10px;
+}
+select {
 	padding: 10px 15px;
-	border: none;
+	border: 1px solid var(--border-primary);
 	border-radius: 8px;
 	font-size: 14px;
-	background-color: var(--accent-primary);
-	color: var(--text-on-accent);
-	cursor: pointer;
-	margin-left: 10px;
-	font-weight: 700;
-	transition: background-color 0.3s;
+	background-color: var(--background-tertiary);
+	color: var(--text-primary);
 }
-#jdownloader:hover {
-	background-color: var(--accent-primary-hover);
-}
-#filter:focus {
+#filter:focus, select:focus {
 	outline: none;
 	border-color: var(--accent-primary);
 	box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.5);
@@ -245,8 +243,9 @@ tbody tr:hover {
 	#filter {
 		margin-bottom: 10px;
 	}
-	#jdownloader {
+	.filter-controls {
 		margin-left: 0;
+		flex-direction: column;
 	}
 	th, td {
 		padding: 10px 0;
@@ -288,6 +287,21 @@ tbody tr:hover {
 			<main>
 				<div class="meta">
 					<input type="text" placeholder="Filter files" id="filter" onkeyup='filter()'>
+					<div class="filter-controls">
+						<select id="type-filter" onchange="filter()">
+							<option value="all">All Types</option>
+							<option value="folders">Folders</option>
+							<option value="images">Images</option>
+							<option value="documents">Documents</option>
+							<option value="videos">Videos</option>
+						</select>
+						<select id="size-filter" onchange="filter()">
+							<option value="all">All Sizes</option>
+							<option value="small">&lt; 1MB</option>
+							<option value="medium">1-10MB</option>
+							<option value="large">&gt; 10MB</option>
+						</select>
+					</div>
 				</div>
 				<div class="listing">
 					<table aria-describedby="summary">
@@ -309,7 +323,9 @@ tbody tr:hover {
 							<td class="hideable">&mdash;</td>
 						</tr>
 						{{- range .Entries}}
-						<tr class="file">
+						{{- $ext := ""}}
+						{{- if not .IsDir}}{{with $dot := findLast "." .Leaf}}{{if ne $dot -1}}{{$ext = substr .Leaf (add $dot 1) | lower}}{{end}}{{end}}{{- end}}
+						<tr class="file" data-extension="{{$ext}}" data-size-bytes="{{.Size}}">
 							<td>
 								{{- if .IsDir}}
 								<svg class="icon" width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#folder"></use></svg>

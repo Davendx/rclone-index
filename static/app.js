@@ -1,22 +1,60 @@
 var filterEl = document.getElementById('filter');
+var typeFilterEl = document.getElementById('type-filter');
+var sizeFilterEl = document.getElementById('size-filter');
 filterEl.focus();
+
+const FILE_TYPES = {
+    images: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'],
+    documents: ['pdf', 'doc', 'docx', 'txt', 'md', 'rtf', 'odt'],
+    videos: ['mp4', 'avi', 'mov', 'mkv', 'webm', 'flv']
+};
+
 function filter() {
     var q = filterEl.value.trim().toLowerCase();
+    var type = typeFilterEl.value;
+    var size = sizeFilterEl.value;
     var elems = document.querySelectorAll('tr.file');
+
     elems.forEach(function(el) {
-        if (!q) {
-            el.style.display = '';
-            return;
-        }
         var nameEl = el.querySelector('.name');
         var nameVal = nameEl.textContent.trim().toLowerCase();
-        if (nameVal.indexOf(q) !== -1) {
+        var extension = el.dataset.extension;
+        var sizeBytes = parseInt(el.dataset.sizeBytes, 10);
+        var isDir = el.querySelector('svg use').getAttribute('xlink:href') === '#folder';
+
+        var nameMatch = nameVal.indexOf(q) !== -1;
+
+        var typeMatch = false;
+        if (type === 'all') {
+            typeMatch = true;
+        } else if (type === 'folders') {
+            typeMatch = isDir;
+        } else {
+            typeMatch = !isDir && FILE_TYPES[type] && FILE_TYPES[type].includes(extension);
+        }
+
+        var sizeMatch = false;
+        if (size === 'all' || isDir) {
+            sizeMatch = true;
+        } else {
+            const megabyte = 1024 * 1024;
+            if (size === 'small') {
+                sizeMatch = sizeBytes < megabyte;
+            } else if (size === 'medium') {
+                sizeMatch = sizeBytes >= megabyte && sizeBytes <= 10 * megabyte;
+            } else if (size === 'large') {
+                sizeMatch = sizeBytes > 10 * megabyte;
+            }
+        }
+
+        if (nameMatch && typeMatch && sizeMatch) {
             el.style.display = '';
         } else {
             el.style.display = 'none';
         }
     });
 }
+
 function localizeDatetime(e, index, ar) {
     if (e.textContent === undefined) {
         return;
