@@ -9,15 +9,29 @@
 		<script language="javascript" src="http://127.0.0.1:9666/jdcheck.js"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
+:root {
+	--font-family-primary: 'Roboto', sans-serif;
+	--text-primary: #e8eaed;
+	--text-secondary: #9aa0a6;
+	--text-on-accent: #202124;
+	--background-primary: #121212;
+	--background-secondary: rgba(32, 33, 36, 0.8);
+	--background-tertiary: rgba(0, 0, 0, 0.2);
+	--border-primary: rgba(255, 255, 255, 0.1);
+	--border-secondary: rgba(255, 255, 255, 0.05);
+	--accent-primary: #8ab4f8;
+	--accent-primary-hover: #9ac0f9;
+	--icon-primary: #9aa0a6;
+}
 * {
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 }
 body {
-	font-family: 'Roboto', sans-serif;
-	color: #e8eaed;
-	background-color: #121212;
+	font-family: var(--font-family-primary);
+	color: var(--text-primary);
+	background-color: var(--background-primary);
 	background-image: url('/static/background.png');
 	background-size: cover;
 	background-attachment: fixed;
@@ -31,15 +45,15 @@ body {
 .container {
 	width: 100%;
 	max-width: 900px;
-	background: rgba(32, 33, 36, 0.8);
+	background: var(--background-secondary);
 	backdrop-filter: blur(20px);
 	border-radius: 12px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid var(--border-primary);
 	box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
 	overflow: hidden;
 }
 a {
-	color: #8ab4f8;
+	color: var(--accent-primary);
 	text-decoration: none;
 }
 a:hover {
@@ -47,7 +61,55 @@ a:hover {
 }
 header {
 	padding: 20px 30px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid var(--border-primary);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+#settings-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 5px;
+}
+#settings-button .icon {
+	fill: var(--text-secondary);
+	transition: fill 0.3s;
+}
+#settings-button:hover .icon {
+	fill: var(--text-primary);
+}
+#settings-panel {
+	padding: 20px 30px;
+	border-bottom: 1px solid var(--border-primary);
+	background-color: var(--background-tertiary);
+}
+#settings-panel.hidden {
+	display: none;
+}
+#settings-panel h3 {
+	margin-bottom: 10px;
+	font-size: 16px;
+	color: var(--text-primary);
+}
+.theme-buttons {
+	display: flex;
+	gap: 10px;
+}
+.theme-button {
+	padding: 8px 12px;
+	border: 1px solid var(--border-primary);
+	border-radius: 8px;
+	font-size: 14px;
+	background-color: transparent;
+	color: var(--text-primary);
+	cursor: pointer;
+	transition: background-color 0.3s, border-color 0.3s;
+}
+.theme-button:hover, .theme-button.active {
+	background-color: var(--accent-primary);
+	color: var(--text-on-accent);
+	border-color: var(--accent-primary);
 }
 h1 {
 	font-size: 24px;
@@ -55,7 +117,7 @@ h1 {
 	white-space: nowrap;
 	overflow-x: hidden;
 	text-overflow: ellipsis;
-	color: #e8eaed;
+	color: var(--text-primary);
 }
 main {
 	display: block;
@@ -69,11 +131,11 @@ main {
 }
 #filter {
 	padding: 10px 15px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid var(--border-primary);
 	border-radius: 8px;
 	font-size: 14px;
-	background-color: rgba(0, 0, 0, 0.2);
-	color: #e8eaed;
+	background-color: var(--background-tertiary);
+	color: var(--text-primary);
 	flex-grow: 1;
 }
 #jdownloader {
@@ -81,19 +143,19 @@ main {
 	border: none;
 	border-radius: 8px;
 	font-size: 14px;
-	background-color: #8ab4f8;
-	color: #202124;
+	background-color: var(--accent-primary);
+	color: var(--text-on-accent);
 	cursor: pointer;
 	margin-left: 10px;
 	font-weight: 700;
 	transition: background-color 0.3s;
 }
 #jdownloader:hover {
-	background-color: #9ac0f9;
+	background-color: var(--accent-primary-hover);
 }
 #filter:focus {
 	outline: none;
-	border-color: #8ab4f8;
+	border-color: var(--accent-primary);
 	box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.5);
 }
 table {
@@ -108,19 +170,19 @@ td {
 }
 th {
 	font-weight: 700;
-	color: #9aa0a6;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--text-secondary);
+	border-bottom: 1px solid var(--border-primary);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
 tr {
-	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	border-bottom: 1px solid var(--border-secondary);
 }
 tbody tr:last-child {
 	border-bottom: none;
 }
 tbody tr:hover {
-	background-color: rgba(255, 255, 255, 0.05);
+	background-color: var(--border-secondary);
 }
 .name {
 	font-weight: 500;
@@ -128,7 +190,33 @@ tbody tr:hover {
 .icon {
 	margin-right: 15px;
 	vertical-align: middle;
-	fill: #9aa0a6;
+	fill: var(--icon-primary);
+}
+.theme-light {
+	--text-primary: #202124;
+	--text-secondary: #5f6368;
+	--text-on-accent: #ffffff;
+	--background-primary: #f8f9fa;
+	--background-secondary: rgba(255, 255, 255, 0.8);
+	--background-tertiary: rgba(0, 0, 0, 0.05);
+	--border-primary: rgba(0, 0, 0, 0.1);
+	--border-secondary: rgba(0, 0, 0, 0.05);
+	--accent-primary: #1a73e8;
+	--accent-primary-hover: #287ae6;
+	--icon-primary: #5f6368;
+}
+.theme-blue {
+	--text-primary: #ffffff;
+	--text-secondary: #bdc1c6;
+	--text-on-accent: #ffffff;
+	--background-primary: #192a56;
+	--background-secondary: rgba(4, 30, 66, 0.8);
+	--background-tertiary: rgba(0, 0, 0, 0.2);
+	--border-primary: rgba(255, 255, 255, 0.1);
+	--border-secondary: rgba(255, 255, 255, 0.05);
+	--accent-primary: #82aaff;
+	--accent-primary-hover: #92baff;
+	--icon-primary: #bdc1c6;
 }
 .goup {
 	font-weight: 700;
@@ -177,6 +265,9 @@ tbody tr:hover {
 				<g id="file" fill="#5f6368">
 					<path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM13 9V3.5L18.5 9H13z"></path>
 				</g>
+				<g id="settings" fill="#5f6368">
+					<path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
+				</g>
 			</defs>
 		</svg>
 		<div class="container">
@@ -184,7 +275,18 @@ tbody tr:hover {
 				<h1>
 					{{range $i, $crumb := .Breadcrumb}}<a href="{{html $crumb.Link}}">{{html $crumb.Text}}</a>{{if ne $i 0}}/{{end}}{{end}}
 				</h1>
+				<button id="settings-button" title="Settings">
+					<svg class="icon" width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#settings"></use></svg>
+				</button>
 			</header>
+			<div id="settings-panel" class="hidden">
+				<h3>Theme</h3>
+				<div class="theme-buttons">
+					<button class="theme-button" data-theme="dark">Dark</button>
+					<button class="theme-button" data-theme="light">Light</button>
+					<button class="theme-button" data-theme="blue">Blue</button>
+				</div>
+			</div>
 			<main>
 				<div class="meta">
 					<input type="text" placeholder="Filter files" id="filter" onkeyup='filter()'>

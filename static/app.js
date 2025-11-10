@@ -137,3 +137,51 @@ function sendToJDownloader(links, packageName) {
         console.error('Error sending to JDownloader:', err);
     });
 }
+
+// Theme switcher logic
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsButton = document.getElementById('settings-button');
+    const settingsPanel = document.getElementById('settings-panel');
+    const themeButtons = document.querySelectorAll('.theme-button');
+    const body = document.body;
+
+    // Toggle settings panel
+    settingsButton.addEventListener('click', () => {
+        settingsPanel.classList.toggle('hidden');
+    });
+
+    // Function to set the theme
+    const setTheme = (theme) => {
+        // Remove all theme classes
+        body.classList.remove('theme-light', 'theme-blue');
+
+        // Add the selected theme class if it's not the default dark theme
+        if (theme !== 'dark') {
+            body.classList.add(`theme-${theme}`);
+        }
+
+        // Update active state on buttons
+        themeButtons.forEach(button => {
+            if (button.dataset.theme === theme) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+
+        // Save theme to local storage
+        localStorage.setItem('theme', theme);
+    };
+
+    // Add click event listeners to theme buttons
+    themeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedTheme = button.dataset.theme;
+            setTheme(selectedTheme);
+        });
+    });
+
+    // Load saved theme from local storage
+    const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark theme
+    setTheme(savedTheme);
+});
