@@ -86,64 +86,16 @@ function colorHeader() {
     });
 }
 
-document.getElementById('jdownloader').addEventListener('click', function() {
-    var fileLinks = [];
-    var linkElements = document.querySelectorAll('tr.file a');
-    linkElements.forEach(function(el) {
-        // only add links that don't go up a directory
-        if (el.getAttribute('href') !== '..') {
-            fileLinks.push(el.href);
-        }
-    });
-
-    var breadcrumbs = document.querySelectorAll('h1 a');
-    var packageName = breadcrumbs[breadcrumbs.length - 1].textContent.trim();
-
-    sendToJDownloader(fileLinks, packageName);
-});
-
-function sendToJDownloader(links, packageName) {
-    var key = CryptoJS.enc.Utf8.parse('1234567890987654');
-    var iv = key;
-
-    var data = {
-        "packageName": packageName,
-        "urls": links.join('\r\n')
-    };
-
-    var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    });
-
-    var params = new URLSearchParams({
-        passwords: '',
-        source: window.location.href,
-        jk: "function f(){ return '31323334353637383930393837363534';}",
-        crypted: encrypted.toString()
-    });
-
-    fetch('http://1227.0.0.1:9666/flash/addcrypted2', {
-        method: 'POST',
-        body: params,
-        mode: 'no-cors'
-    }).then(response => {
-        // We can't actually read the response in no-cors mode,
-        // but a successful dispatch means JDownloader is likely running.
-        // A failed dispatch will be caught in the .catch block.
-    }).catch(err => {
-        alert('Could not connect to JDownloader. Please make sure it is running and the Click\'n\'Load extension is enabled.');
-        console.error('Error sending to JDownloader:', err);
-    });
-}
-
 // Theme switcher logic
-document.addEventListener('DOMContentLoaded', () => {
+(function() {
     const settingsButton = document.getElementById('settings-button');
     const settingsPanel = document.getElementById('settings-panel');
     const themeButtons = document.querySelectorAll('.theme-button');
     const body = document.body;
+
+    if (!settingsButton) {
+        return;
+    }
 
     // Toggle settings panel
     settingsButton.addEventListener('click', () => {
@@ -184,4 +136,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved theme from local storage
     const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark theme
     setTheme(savedTheme);
-});
+})();
